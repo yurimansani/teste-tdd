@@ -1,49 +1,56 @@
 <?php 
 	class Avaliador
 	{
-		private $maiorValor = -INF;
-		private $menorValor = INF;
+		private $maiorDeTodos = -INF;
+		private $menorDeTodos = INF;
+		private $media = 0;
+		private $maiores;
 		
 		public function avalia(Leilao $leilao)
 		{
-			foreach ($leilao->getLances() as $lance ) {
-				if ($lance->getValor() > $this->maiorValor) 
-				{
-					$this->maiorValor = $lance->getValor();
-				}
-				if ($lance->getValor() < $this->menorValor) 
-				{
-					$this->menorValor = $lance->getValor();
-				}
-				
+			$total = 0;
+			foreach($leilao->getLances() as $lance) 
+			{
+				if($lance->getValor() > $this->maiorDeTodos) $this->maiorDeTodos = $lance->getValor();
+				if($lance->getValor() < $this->menorDeTodos) $this->menorDeTodos = $lance->getValor();
+
+				$total += $lance->getValor();
 			}
+			$this->media = $total / count($leilao->getLances());
+			$this->pegaOsMaioresNo($leilao);
 		}
 		
-		public function avaliaMedia(Leilao $leilao)
+		
+		public function pegaOsMaioresNo(Leilao $leilao) 
 		{
-			$qtdLances = count($leilao->getLances());
-			
-			$valorTotal = 0;
-			
-			foreach ($leilao->getLances() as $lance ) 
-			{
-				$valorTotal = $valorTotal + $lance->getValor();
-			}
 
-			$valorMedio = $valorTotal / $qtdLances;
-			return $valorMedio;
+			$lances = $leilao->getLances();
+			usort($lances,function ($a,$b) {
+			    if($a->getValor() == $b->getValor()) return 0;
+			    return ($a->getValor() < $b->getValor()) ? 1 : -1;
+			});
+
+			$this->maiores = array_slice($lances, 0, 3);
 		}
-
 
 
 		public function getMaiorLance()
 		{
-			return $this->maiorValor;
+			return $this->maiorDeTodos;
 		}
 
 		public function getMenorLance()
 		{
-			return $this->menorValor;
+			return $this->menorDeTodos;
+		}
+
+		public function getMedia()
+		{
+			return $this->media;
+		}
+
+		public function getTop3() {
+			return $this->maiores;
 		}
 	}
 
