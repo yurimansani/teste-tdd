@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 	require '../Usuario.php';
 	require '../Lance.php';
 	require '../Leilao.php';
@@ -144,18 +145,83 @@
 
 			$leilao = new Leilao("Playstation 3");
 
-			$leilao->propoe(new Lance($joao,250));
+			$leilao->propoe(new Lance($joao,150));
 			$leilao->propoe(new Lance($renan,300));
 			$leilao->propoe(new Lance($felipe,400));
+			$leilao->propoe(new Lance($joao,500));
+			$leilao->propoe(new Lance($renan,600));
 
 			$leiloeiro = new Avaliador();
 			$leiloeiro->avalia($leilao);
 
-			$maiores = $leiloeiro->getTop3();
+			$maiores = $leiloeiro->getTresMaiores();
 			$this->assertEquals(count($maiores),3);
-			$this->assertEquals($maiores[0]->getValor(),400);
-			$this->assertEquals($maiores[1]->getValor(),300);
-			$this->assertEquals($maiores[2]->getValor(),250);
+			$this->assertEquals($maiores[0]->getValor(),600);
+			$this->assertEquals($maiores[1]->getValor(),500);
+			$this->assertEquals($maiores[2]->getValor(),400);
 		}
+
+		public function testDeveEncontrarOsTresMaioresLances() 
+		{
+
+			$joao = new Usuario("Joao");
+			$renan = new Usuario("Renan");
+			$felipe = new Usuario("Felipe");
+
+			$leilao = new Leilao("Playstation 3");
+
+			$leilao->propoe(new Lance($joao,150));
+			$leilao->propoe(new Lance($renan,300));
+			$leilao->propoe(new Lance($felipe,400));
+			$leilao->propoe(new Lance($joao,500));
+			$leilao->propoe(new Lance($renan,600));
+
+			$leiloeiro = new Avaliador();
+			$leiloeiro->avalia($leilao);
+
+			$maiores = $leiloeiro->getTresMaiores();
+			$this->assertEquals(count($maiores),3);
+			$this->assertEquals($maiores[0]->getValor(),600);
+			$this->assertEquals($maiores[1]->getValor(),500);
+			$this->assertEquals($maiores[2]->getValor(),400);
+		}
+
+		public function testDeveDevolverTodosLancesCasoNaoHajaNoMinimo3() 
+		{
+
+			$joao = new Usuario("Joao");
+			$renan = new Usuario("Renan");
+			$felipe = new Usuario("Felipe");
+
+			$leilao = new Leilao("Playstation 3");
+
+			$leilao->propoe(new Lance($joao,150));
+			$leilao->propoe(new Lance($renan,300));
+
+			$leiloeiro = new Avaliador();
+			$leiloeiro->avalia($leilao);
+
+			$maiores = $leiloeiro->getTresMaiores();
+			$this->assertEquals(2, count($maiores));
+			$this->assertEquals(300, $maiores[0]->getValor());
+			$this->assertEquals(150, $maiores[1]->getValor());
+		}
+
+		public function testDeveDevolverListaVaziaCasoNaoHajaLances() 
+		{
+
+			$joao = new Usuario("Joao");
+			$renan = new Usuario("Renan");
+			$felipe = new Usuario("Felipe");
+
+			$leilao = new Leilao("Playstation 3");
+
+			$leiloeiro = new Avaliador();
+			$leiloeiro->avalia($leilao);
+
+			$maiores = $leiloeiro->getTresMaiores();
+			$this->assertEquals(0,count($maiores));
+		}
+
 	}
 ?>
